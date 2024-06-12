@@ -43,7 +43,6 @@ function App() {
           <Route path="/user" element={<PersonalAreaWithHeader />} />
         </Routes>
       </BrowserRouter>
-      <Footer />
     </div>
   );
 }
@@ -53,6 +52,8 @@ function ChangePasswordWithHeader() {
     <>
       <Header />
       <ChangePassword />
+      <Footer />
+
     </>
   );
 }
@@ -62,6 +63,8 @@ function HomeWithHeader() {
     <>
       <Header />
       <Home />
+      <Footer />
+
     </>
   );
 }
@@ -71,6 +74,8 @@ function MainWithHeader() {
     <>
       <Header />
       <Main />
+      <Footer />
+
     </>
   );
 }
@@ -80,6 +85,8 @@ function PersonalAreaWithHeader() {
     <>
       <Header />
       <PersonalArea />
+      <Footer />
+
     </>
   );
 }

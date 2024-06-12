@@ -17,7 +17,7 @@ app.post("/signup", (req, res) => {
     const { login, email, password, class: userClass } = req.body;
 
     // Проверка существования логина
-    db.query("SELECT * FROM Users WHERE `login` = ?", [login], (loginError, loginResults) => {
+    db.query("SELECT * FROM users WHERE `login` = ?", [login], (loginError, loginResults) => {
         if (loginError) {
             return res.status(500).json({ error: "Ошибка при проверке логина" });
         }
@@ -26,7 +26,7 @@ app.post("/signup", (req, res) => {
         }
 
         // Проверка существования почты
-        db.query("SELECT * FROM Users WHERE `email` = ?", [email], (emailError, emailResults) => {
+        db.query("SELECT * FROM users WHERE `email` = ?", [email], (emailError, emailResults) => {
             if (emailError) {
                 return res.status(500).json({ error: "Ошибка при проверке почты" });
             }
@@ -35,7 +35,7 @@ app.post("/signup", (req, res) => {
             }
 
             // Если логин и почта уникальны, выполняем регистрацию
-            const sql = "INSERT INTO Users (`login`, `email`, `password`, `class`) VALUES (?, ?, ?, ?)";
+            const sql = "INSERT INTO users (`login`, `email`, `password`, `class`) VALUES (?, ?, ?, ?)";
             const values = [login, email, password, userClass];
             db.query(sql, values, (signupError, data) => {
                 if (signupError) {
@@ -51,7 +51,7 @@ app.post("/signup", (req, res) => {
 app.post("/login", (req, res) => {
     const { login, password } = req.body;
 
-    const sql = "SELECT * FROM Users WHERE `login` = ?";
+    const sql = "SELECT * FROM users WHERE `login` = ?";
     db.query(sql, [login], async (err, data) => {
         if (err) {
             console.error("Ошибка при выполнении запроса к базе данных:", err);
@@ -193,7 +193,7 @@ app.put("/tasks/:id", (req, res) => {
             }
 
             // Дополнительный SQL-запрос для обновления опыта
-            const updateExperienceSql = "UPDATE Users SET experience = experience + ? WHERE id = ?";
+            const updateExperienceSql = "UPDATE users SET experience = experience + ? WHERE id = ?";
             db.query(updateExperienceSql, [experienceChange, currentTask.user_id], (experienceError, experienceResult) => {
                 if (experienceError) {
                     console.error("Ошибка при обновлении опыта пользователя:", experienceError);
@@ -209,7 +209,7 @@ app.put("/tasks/:id", (req, res) => {
                             // Не отправляем ошибку клиенту, так как основная операция успешно завершена
                         }
                         // Дополнительный SQL-запрос для обновления опыта в каждой подзадаче
-                        const updateSubtasksExperienceSql = "UPDATE Users SET experience = experience + 10 WHERE id IN (SELECT user_id FROM tasks WHERE parent_id = ?)";
+                        const updateSubtasksExperienceSql = "UPDATE users SET experience = experience + 10 WHERE id IN (SELECT user_id FROM tasks WHERE parent_id = ?)";
                         db.query(updateSubtasksExperienceSql, [id], (subtasksExperienceError, subtasksExperienceResult) => {
                             if (subtasksExperienceError) {
                                 console.error("Ошибка при обновлении опыта в подзадачах:", subtasksExperienceError);
@@ -250,7 +250,7 @@ app.delete("/tasks/:id", (req, res) => {
 // Добавление подзадачи
 app.post("/subtasks", (req, res) => {
     const { text, completed, start_date, end_date, userId, parentId } = req.body; // Включаем parentId в параметры запроса
-    const sql = "INSERT INTO Tasks (text, completed, start_date, end_date, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
+    const sql = "INSERT INTO tasks (text, completed, start_date, end_date, user_id, parent_id) VALUES (?, ?, ?, ?, ?, ?)";
     db.query(sql, [text, completed, start_date, end_date, userId, parentId], (error, result) => {
         if (error) {
             console.error("Ошибка при добавлении подзадачи:", error);
@@ -302,7 +302,7 @@ app.put("/subtasks/:id", (req, res) => {
 
 app.get("/experience/:userId", (req, res) => {
     const userId = req.params.userId;
-    const sql = "SELECT experience FROM Users WHERE id = ?";
+    const sql = "SELECT experience FROM users WHERE id = ?";
 
     db.query(sql, [userId], (error, results) => {
         if (error) {
@@ -324,7 +324,7 @@ app.put("/experience/:userId", (req, res) => {
     const userId = req.params.userId;
     const { experience } = req.body;
 
-    const sql = "UPDATE Users SET experience = ? WHERE id = ?";
+    const sql = "UPDATE users SET experience = ? WHERE id = ?";
     db.query(sql, [experience, userId], (error, result) => {
         if (error) {
             console.error("Ошибка при обновлении опыта пользователя:", error);
@@ -341,7 +341,7 @@ app.put("/experience/:userId", (req, res) => {
 app.put('/change-password', async (req, res) => {
     const { userId, currentPassword, newPassword } = req.body;
 
-    const sql = "SELECT * FROM Users WHERE `id` = ?";
+    const sql = "SELECT * FROM users WHERE `id` = ?";
     db.query(sql, [userId], async (err, data) => {
         if (err) {
             console.error("Ошибка при выполнении запроса к базе данных:", err);
@@ -360,7 +360,7 @@ app.put('/change-password', async (req, res) => {
         }
 
         const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-        const updateSql = "UPDATE Users SET `password` = ? WHERE `id` = ?";
+        const updateSql = "UPDATE users SET `password` = ? WHERE `id` = ?";
         db.query(updateSql, [hashedNewPassword, userId], (updateErr, updateData) => {
             if (updateErr) {
                 console.error("Ошибка при обновлении пароля:", updateErr);

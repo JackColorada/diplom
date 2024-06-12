@@ -8,7 +8,6 @@ import Validation from './LoginValidation';
 import {connect} from '../connect';
 function Login() {
     JSON.stringify(connect);
-    console.log(connect);
     const [values, setValues] = useState({
         login: "",
         password: ""
@@ -24,8 +23,6 @@ function Login() {
         event.preventDefault();
         setErrors({}); 
         event.preventDefault();
-
-        // Вызываем функцию валидации и сохраняем результаты в состоянии ошибок
         const validationErrors = Validation(values);
         setErrors(validationErrors);
         axios.post(`${connect}/login`, values)
@@ -47,11 +44,11 @@ function Login() {
     }
 
     return (
-        <div className="position-relative vh-100">
+        <div className="position-relative vh-100 overflow-hidden">
             <MakeItRain />
-            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
-                <div className="bg-white p-4 rounded" style={{ width: '300px' }}>
-                    <h2 className="mb-4">Вход</h2>
+            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center overflow-hidden">
+                <div className="bg-white p-4 rounded" style={{ maxWidth: '300px', width: '90%' }}>
+                    <h2 className="mb-4 text-center">Вход</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="login"><strong>Логин</strong></label>

@@ -38,12 +38,9 @@ function Signup() {
                 try {
                     const response = await axios.post(`${connect}/signup`, { ...values, password: hashedPassword });
                     if (response.data.success) {
-                        // Сохраняем информацию о регистрации пользователя в localStorage
                         localStorage.setItem('isLoggedIn', true);
-                        // Перенаправляем пользователя на главную страницу
                         navigate('/');
                         
-                        // Дополнительный запрос для получения данных о пользователе
                         axios.post(`${connect}/login`,  values)
                             .then(res => {
                                 if (res.data.success) {
@@ -90,27 +87,27 @@ function Signup() {
    
 
     return (
-        <div className="position-relative vh-100">
+        <div className="position-relative vh-100 overflow-hidden">
             <MakeItRain />
-            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center">
+            <div className="position-absolute top-0 start-0 w-100 h-100 d-flex justify-content-center align-items-center overflow-hidden">
                 <div className="bg-white p-4 rounded" style={{ width: '90%', maxWidth: '400px' }}>
                     <h2 className="mb-4 text-center">Регистрация</h2>
                     <form onSubmit={handleSubmit}>
                         <div className="mb-3">
                             <label htmlFor="login"><strong>Логин</strong></label>
-                            <input type="text" placeholder="Введите ваш логин" className="form-control rounded-0" name='login' onChange={handleInput}></input>
+                            <input type="text" placeholder="Введите ваш логин" className="form-control rounded-0" name="login" onChange={handleInput} />
                             {errors.login && <span className="text-danger"> {errors.login}</span>}
                             {existingUserError.login && <span className="text-danger"> {existingUserError.login}</span>}
                         </div>
                         <div className="mb-3">
                             <label htmlFor="email"><strong>Почта</strong></label>
-                            <input type="email" placeholder="Введите вашу почту" className="form-control rounded-0" name='email' onChange={handleInput}></input>
+                            <input type="email" placeholder="Введите вашу почту" className="form-control rounded-0" name="email" onChange={handleInput} />
                             {errors.email && <span className="text-danger"> {errors.email}</span>}
                             {existingUserError.email && <span className="text-danger"> {existingUserError.email}</span>}
                         </div>
                         <div className="mb-3">
                             <label htmlFor="password"><strong>Пароль</strong></label>
-                            <input type="password" placeholder="Введите ваш пароль" className="form-control rounded-0" name='password' onChange={handleInput}></input>
+                            <input type="password" placeholder="Введите ваш пароль" className="form-control rounded-0" name="password" onChange={handleInput} />
                             {errors.password && <span className="text-danger"> {errors.password}</span>}
                         </div>
                         <p>Пароль должен содержать хотя бы одну цифру, одну строчную букву, одну заглавную букву и иметь длину не менее 8 символов</p>

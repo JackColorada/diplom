@@ -393,7 +393,7 @@ function Home() {
                     </span>
                   )}
                 </div>
-                <div className="d-flex flex-column flex-md-row align-items-md-center">
+                <div className="d-flex flex-column flex-md-row edit-buttons-container align-items-md-center edit-buttons-container">
                   <span className="me-md-2">{formatDateForDisplay(item.start_date)} - {formatDateForDisplay(item.end_date)}</span>
                   {editingItem === item.id ? (
                     <div className="d-flex">
@@ -405,7 +405,7 @@ function Home() {
                       </button>
                     </div>
                   ) : (
-                    <div className="d-flex">
+                    <div >
                       <button
                         className="btn btn-warning m-1"
                         onClick={() => {
@@ -450,7 +450,7 @@ function Home() {
                             </span>
                           )}
                         </div>
-                        <div className="d-flex flex-column flex-md-row align-items-md-center">
+                        <div className="d-flex flex-column flex-md-row align-items-md-center edit-buttons-container">
                           {editingSubtask === subtask.id ? (
                             <div className="d-flex">
                               <button className="btn btn-primary m-1" onClick={() => editSubtask(item.id, subtask.id)}>

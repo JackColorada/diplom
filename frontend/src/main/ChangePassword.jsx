@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {connect} from '../connect';
+import { connect } from '../connect';
+import validatePasswords from './passwordValidation';
+import { useNavigate } from 'react-router-dom';
 
 function ChangePassword() {
-
+    const navigate = useNavigate();
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [userId, setUserId] = useState(null);
-    JSON.stringify(connect);
+    const [errors, setErrors] = useState({});
+    const [serverError, setServerError] = useState('');
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('userData'));
@@ -21,8 +24,11 @@ function ChangePassword() {
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        if (newPassword !== confirmPassword) {
-            alert("Пароли не совпадают");
+        
+        const validationErrors = validatePasswords(currentPassword, newPassword, confirmPassword);
+        setErrors(validationErrors);
+
+        if (Object.keys(validationErrors).length > 0) {
             return;
         }
 
@@ -32,11 +38,17 @@ function ChangePassword() {
                 currentPassword,
                 newPassword
             });
-
-            alert(response.data.message);
+            navigate('/user');
         } catch (error) {
             console.error("Ошибка при изменении пароля:", error);
-            alert("Ошибка при изменении пароля");
+            if (error.response && error.response.status === 400) {
+                setErrors(prevErrors => ({
+                    ...prevErrors,
+                    currentPassword: 'Текущий пароль неверен.'
+                }));
+            } else {
+                setServerError('Ошибка при изменении пароля.');
+            }
         }
     };
 
@@ -52,8 +64,12 @@ function ChangePassword() {
                             className="form-control"
                             id="currentPassword"
                             value={currentPassword}
-                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            onChange={(e) => {
+                                setCurrentPassword(e.target.value);
+                                setErrors(prevErrors => ({ ...prevErrors, currentPassword: '' }));
+                            }}
                         />
+                        {errors.currentPassword && <span className="text-danger">{errors.currentPassword}</span>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="newPassword">Новый пароль</label>
@@ -62,8 +78,12 @@ function ChangePassword() {
                             className="form-control"
                             id="newPassword"
                             value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
+                            onChange={(e) => {
+                                setNewPassword(e.target.value);
+                                setErrors(prevErrors => ({ ...prevErrors, newPassword: '' }));
+                            }}
                         />
+                        {errors.newPassword && <span className="text-danger">{errors.newPassword}</span>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="confirmPassword">Подтвердите пароль</label>
@@ -72,9 +92,14 @@ function ChangePassword() {
                             className="form-control"
                             id="confirmPassword"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) => {
+                                setConfirmPassword(e.target.value);
+                                setErrors(prevErrors => ({ ...prevErrors, confirmPassword: '' }));
+                            }}
                         />
+                        {errors.confirmPassword && <span className="text-danger">{errors.confirmPassword}</span>}
                     </div>
+                    {serverError && <div className="text-danger mb-3">{serverError}</div>}
                     <button type="submit" className="btn btn-primary">Сохранить</button>
                 </form>
             </div>
